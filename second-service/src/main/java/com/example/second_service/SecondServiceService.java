@@ -21,4 +21,9 @@ public class SecondServiceService {
         log.info(header);
         return "Hello World in Second Service";
     }
+
+    @GetMapping("/check")
+    public String check() {
+        return "Hi there, Second Server check";
+    }
 }
