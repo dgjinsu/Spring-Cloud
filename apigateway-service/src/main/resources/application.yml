@@ -23,6 +23,12 @@ spring:
 #            - AddRequestHeader=first-request, first-requests-header2 # key, value 값
 #            - AddResponseHeader=first-response, first-response-header2 # key, value 값
             - CustomFilter
+      default-filters:  # 글로벌 필터가 항상 먼저 실행되고 마지막에 종료
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway GlobalFilter
+            preLogger: true
+            postLogger: true
 
 eureka:
   client:

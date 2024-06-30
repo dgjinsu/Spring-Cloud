@@ -20,7 +20,6 @@ public class FilterConfig {
                     .addResponseHeader("second-response", "second-response-header"))
                 .uri("http://localhost:8082"))
             .build();
-
     }
 
 }
