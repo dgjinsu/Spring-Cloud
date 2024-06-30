@@ -22,7 +22,12 @@ spring:
           filters:
 #            - AddRequestHeader=first-request, first-requests-header2 # key, value 값
 #            - AddResponseHeader=first-response, first-response-header2 # key, value 값
-            - CustomFilter
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
       default-filters:  # 글로벌 필터가 항상 먼저 실행되고 마지막에 종료
         - name: GlobalFilter
           args:
