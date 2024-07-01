@@ -23,7 +23,8 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(auth -> auth
-            .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll());
+            .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/**")).permitAll());
 
         return http.build();
     }
