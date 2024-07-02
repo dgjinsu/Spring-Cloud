@@ -6,7 +6,7 @@ spring:
     name: user-service
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/userservice
+    url: jdbc:mysql://localhost:3306/ecommerce
     username: root
     password: ${DB_PASSWORD}
   jpa:
