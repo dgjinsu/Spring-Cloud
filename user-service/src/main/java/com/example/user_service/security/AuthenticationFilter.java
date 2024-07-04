@@ -1,38 +1,48 @@
 package com.example.user_service.security;
 
-import com.example.user_service.service.UserService;
+import com.example.user_service.jpa.UserEntity;
+import com.example.user_service.jpa.UserRepository;
 import com.example.user_service.vo.RequestLogin;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.jcajce.BCFKSLoadStoreParameter.SignatureAlgorithm;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    //    final AuthenticationManager authenticationManager;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final Environment env;
+    private final Key key;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager,
-        UserService userService,
-        Environment env) {
+    public AuthenticationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, Environment environment) {
         super.setAuthenticationManager(authenticationManager);
-        this.userService = userService;
-        this.env = env;
+        this.userRepository = userRepository;
+        this.env = environment;
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("token.secret"));
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
@@ -58,16 +68,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         HttpServletResponse response,
         FilterChain chain,
         Authentication authResult) throws IOException, ServletException {
-//        String userName = ((User) authResult.getPrincipal()).getUsername();
-//        UserDto userDetails = userService.getUserDetailsByEmail(userName);
-//        String token = Jwts.builder()
-//            .setSubject(userDetails.getUserId())
-//            .setExpiration(new Date(System.currentTimeMillis() +
-//                Long.parseLong(env.getProperty("token.expiration_time"))))
-//            .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
-//            .compact();
-//
-//        response.addHeader("token", token);
-//        response.addHeader("userId", userDetails.getUserId());
+        // Principal을 UserDetails로 캐스팅
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        UserEntity userEntity = principalDetails.getUserEntity();
+
+        String token = Jwts.builder()
+            .setSubject(userEntity.getUserId())
+            .setExpiration(new Date(System.currentTimeMillis() +
+                Long.parseLong(env.getProperty("token.expiration_time"))))
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
+
+        response.addHeader("token", token);
+        response.addHeader("userId", userEntity.getUserId());
     }
 }

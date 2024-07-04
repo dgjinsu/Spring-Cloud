@@ -17,11 +17,10 @@ import org.springframework.stereotype.Component;
 public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public PrincipalDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findUserByEmail(username)
             .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPwd(), true, true, true, true, new ArrayList<>());
+        return new PrincipalDetails(userEntity);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.user_service.security;
 
+import com.example.user_service.jpa.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +24,12 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
-        UserDetails userDetails = customUserDetailService.loadUserByUsername(authentication.getName());
-        if (!passwordEncoder.matches(authentication.getCredentials().toString(), userDetails.getPassword())) {
+        PrincipalDetails principalDetails = customUserDetailService.loadUserByUsername(authentication.getName());
+        UserEntity userEntity = principalDetails.getUserEntity();
+        if (!passwordEncoder.matches(authentication.getCredentials().toString(), userEntity.getEncryptedPwd())) {
             throw new BadCredentialsException("Wrong password");
         }
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(principalDetails, null);
     }
 
 }
