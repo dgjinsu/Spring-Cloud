@@ -26,6 +26,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
             .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
+            .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll()
             .requestMatchers(new AntPathRequestMatcher("/**")).permitAll());
 
         http.addFilter(customAuthenticationFilter);
