@@ -8,7 +8,8 @@ spring:
       server:
         git:
           uri: https://github.com/dgjinsu/spring-cloud-config.git
-
+  # docker run -d -p 15672:15672 -p 5672:5672 --name rabbitmq rabbitmq
+  # docker exec rabbitmq rabbitmq-plugins enable rabbitmq_management
   rabbitmq:
     host: 127.0.0.1
     port: 5672
