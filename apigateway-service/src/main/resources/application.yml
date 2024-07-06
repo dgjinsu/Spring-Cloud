@@ -52,6 +52,13 @@ spring:
           predicates:
             - Path=/order-service/**
 
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    stream:
+      username: guest
+      password: guest
+
 
 #        - id: first-service
 #          uri: lb://MY-FIRST-SERVICE

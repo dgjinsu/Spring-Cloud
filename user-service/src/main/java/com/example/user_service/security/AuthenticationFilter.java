@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,14 +36,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UserRepository userRepository;
     private final Environment env;
-    private final Key key;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, Environment environment) {
         super.setAuthenticationManager(authenticationManager);
         this.userRepository = userRepository;
         this.env = environment;
-        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("token.secret"));
-        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
@@ -73,11 +71,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         UserEntity userEntity = principalDetails.getUserEntity();
 
+        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("token.secret"));
+
         String token = Jwts.builder()
             .setSubject(userEntity.getUserId())
             .setExpiration(new Date(System.currentTimeMillis() +
                 Long.parseLong(env.getProperty("token.expiration_time"))))
-            .signWith(key, SignatureAlgorithm.HS256)
+            .signWith(Keys.hmacShaKeyFor(keyBytes), SignatureAlgorithm.HS256)
             .compact();
 
         response.addHeader("token", token);
