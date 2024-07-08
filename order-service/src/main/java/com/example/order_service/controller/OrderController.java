@@ -57,7 +57,7 @@ public class OrderController {
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrder(@PathVariable("userId") String userId) throws Exception {
         log.info("Before retrieve orders data");
-        Iterable<OrderEntity> orderList = orderService.getOrdersByUserId(userId);
+        List<OrderEntity> orderList = orderService.getOrdersByUserId(userId);
 
         List<ResponseOrder> result = new ArrayList<>();
         orderList.forEach(v -> result.add(new ModelMapper().map(v, ResponseOrder.class)));
