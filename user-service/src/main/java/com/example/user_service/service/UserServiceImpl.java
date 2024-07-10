@@ -2,6 +2,7 @@ package com.example.user_service.service;
 
 import com.example.user_service.client.OrderServiceClient;
 import com.example.user_service.dto.UserDto;
+import com.example.user_service.error.FeignErrorDecoder;
 import com.example.user_service.jpa.UserEntity;
 import com.example.user_service.jpa.UserRepository;
 import com.example.user_service.vo.ResponseOrder;

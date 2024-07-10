@@ -41,6 +41,10 @@ management:
       exposure:
         include: refresh, health, beans, busrefresh, info, metrics, prometheus
 
+logging:
+  level:
+    com.example.user_service.client: DEBUG
+
 #token:
 #  expiration_time: 86400000
 #  secret: rherthyjhjtythrjyjhertjh43e5hkguwhegkjdrhgoizegtwa3ytawn
