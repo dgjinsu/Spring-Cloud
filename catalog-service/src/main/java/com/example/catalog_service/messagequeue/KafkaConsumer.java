@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class KafkaConsumer {
     private final CatalogRepository catalogRepository;
 
-    @KafkaListener(topics = "example-catalog-topic")
+    @KafkaListener(topics = "example-catalog-topic", groupId = "consumerGroupId")
     public void updateQty(String kafkaMessage) {
         log.info("kafka Message: ->" + kafkaMessage);
 
