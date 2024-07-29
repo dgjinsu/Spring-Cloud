@@ -1,8 +1,14 @@
+- 주키퍼 실행
 - ./bin/windows/zookeeper-server-start.bat ./config/zookeeper.properties
 
 <br>
-
+- 카프카 실행
 - ./bin/windows/kafka-server-start.bat ./config/server.properties
+
+<br>
+
+- 커넥트 실행
+- ./bin/windows/connect-distributed ./etc/kafka/connect-distributed.properties
 
 <br>
 - 토픽 조회
