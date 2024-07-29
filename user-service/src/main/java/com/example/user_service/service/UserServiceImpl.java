@@ -13,6 +13,8 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     private final RestTemplate restTemplate;
     private final OrderServiceClient orderServiceClient;
     private final Environment env;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -61,7 +64,13 @@ public class UserServiceImpl implements UserService {
 //            new ParameterizedTypeReference<List<ResponseOrder>>() {
 //            }).getBody();
 
-        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+        // 써킷브레이커 이전 버전
+//        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
+
+        // 써킷 브레이커 적용 후
+        CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
+        List<ResponseOrder> orderList = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
+            throwable -> new ArrayList<>());
 
         userDto.setOrders(orderList);
 
