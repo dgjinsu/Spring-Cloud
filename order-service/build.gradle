@@ -40,6 +40,13 @@ dependencies {
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
 
 	implementation 'org.springframework.kafka:spring-kafka'
+
+	// zipkin, sleuth
+//	implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
+//	implementation 'org.springframework.cloud:spring-cloud-starter-zipkin:2.2.8.RELEASE'
+	implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 }
 
 dependencyManagement {
