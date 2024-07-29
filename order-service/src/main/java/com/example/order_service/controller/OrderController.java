@@ -65,6 +65,7 @@ public class OrderController {
 
         ResponseOrder responseOrder = mapper.map(orderDto, ResponseOrder.class);
 
+        log.info("After add orders data");
         return ResponseEntity.status(HttpStatus.CREATED).body(responseOrder);
     }
 
@@ -75,7 +76,7 @@ public class OrderController {
 
         List<ResponseOrder> result = new ArrayList<>();
         orderList.forEach(v -> result.add(new ModelMapper().map(v, ResponseOrder.class)));
-
+        log.info("After retrieve orders data");
         return ResponseEntity.ok(result);
     }
 }

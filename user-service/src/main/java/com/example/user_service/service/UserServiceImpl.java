@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -67,10 +69,12 @@ public class UserServiceImpl implements UserService {
         // 써킷브레이커 이전 버전
 //        List<ResponseOrder> orderList = orderServiceClient.getOrders(userId);
 
+        log.info("orders 마이크로서비스 호출 전");
         // 써킷 브레이커 적용 후
         CircuitBreaker circuitbreaker = circuitBreakerFactory.create("circuitbreaker");
         List<ResponseOrder> orderList = circuitbreaker.run(() -> orderServiceClient.getOrders(userId),
             throwable -> new ArrayList<>());
+        log.info("orders 마이크로서비스 호출 후");
 
         userDto.setOrders(orderList);
 
