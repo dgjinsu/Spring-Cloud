@@ -52,6 +52,15 @@ spring:
           predicates:
             - Path=/order-service/**
 
+        - id: order-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+            - Method=GET, POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/order-service/(?<segment>.*), /$\{segment}
+
   rabbitmq:
     host: 127.0.0.1
     port: 5672
@@ -95,4 +104,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace, busrefresh, info, metrics, prometheus
+        include: "*"
