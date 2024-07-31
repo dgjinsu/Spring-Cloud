@@ -50,3 +50,17 @@
 ```
 http://localhost:8083/connectors/my-sink-connect
 ```
+
+<br>
+
+- rabbmit mq
+
+```
+docker run -d --name rabbitmq --network ecommerce-network -p 15672:15672 -p 5672:5672 -p 15671:15671 -p 5671:5671 -p 4369:4369 -e RABBITMQ_DEFAULT_USER=guest -e RABBITMQ_DEFAULT_PASS=guest rabbitmq:management
+```
+
+- config server
+
+```
+docker run -d -p 8888:8888 --network ecommerce-network -e "spring.rabbitmq.host=rabbitmq" -e "spring.profiles.actvice=default" --name config-service dgjinsu/config-service
+```
