@@ -64,3 +64,23 @@ docker run -d --name rabbitmq --network ecommerce-network -p 15672:15672 -p 5672
 ```
 docker run -d -p 8888:8888 --network ecommerce-network -e "spring.rabbitmq.host=rabbitmq" -e "spring.profiles.actvice=default" --name config-service dgjinsu/config-service
 ```
+
+- discovery service (유레카)
+
+```
+docker run -d -p 8761:8761 --network ecommerce-network -e spirng.cloud.config.uri=http://config-service:8888 --name discovery-service dgjinsu/discovery-service
+```
+
+- apigateway service
+
+```
+docker run -d -p 8000:8000 --network ecommerce-network -e spring.cloud.config.uri=http://config-servic
+e:8888 -e spring.rabbitmq.host=rabbitmq -e eureka.client.service-url.defaultZone=http://discovery-service:8761/eureka --name ap
+igateway-service dgjinsu/apigateway-service
+```
+
+- mariadb
+
+```
+docker run -d --name my_mariadb --network ecommerce-network -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=ecommerce -p 13306:3306 mariadb
+```
