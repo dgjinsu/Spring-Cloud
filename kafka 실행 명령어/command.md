@@ -83,4 +83,48 @@ igateway-service dgjinsu/apigateway-service
 
 ```
 docker run -d --name my_mariadb --network ecommerce-network -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=ecommerce -p 13306:3306 mariadb
+docker run -d --name mysql --network ecommerce-network -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=ecommerce -p 13306:3306 mysql
+
+```
+
+- zipkin
+
+```
+docker run -d -p 9411:9411 --network ecommerce-network --name zipkin openzipkin/zipkin
+```
+
+- prometheus
+
+```
+docker run -d -p 9090:9090 --network ecommerce-network --name prometheus -v /prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+```
+
+<br>
+- grafana
+
+```
+docker run -d -p 3000:3000 --network ecommerce-network --name grafana grafana/grafana
+```
+
+<br>
+- user-service
+```
+docker run -d --network ecommerce-network --name user-service -e spring.cloud.config.uri=http://config-service:8888 -e spring.rabbitmq.host=rabbitmq -e spring.zipkin.base-url=http://zipkin:9411 -e management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans -e eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka -e logging.file=/api-logs/users-ws.log -e spring.datasource.url=jdbc:mysql://mysql:3306/ecommerce dgjinsu/user-service
+```
+- docker 실행 시 -e 옵션을 주어도 spring cloud config 에서 주는 옵션은 변경하지 못 함. 우선 순위가 더 높음.
+
+<br>
+
+- order-service
+
+```
+docker run -d --network ecommerce-network --name order-service -e spring.zipkin.base-url=http://zipkin:9411 -e management.zipkin.tracing.endpoint=http://zipkin:9411/api/v2/spans -e eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka -e logging.file=/api-logs/users-ws.log -e spring.datasource.url=jdbc:mysql://mysql:3306/ecommerce -e spring.datasource.password=1234 dgjinsu/order-service
+```
+
+<br>
+
+- catalog-service
+
+```
+docker run -d --network ecommerce-network --name catalog-service -e spring.cloud.config.uri=http://config-service:8888 -e spring.rabbitmq.host=rabbitmq -e eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka -e logging.file=/api-logs/users-ws.log -e spring.datasource.url=jdbc:mysql://mysql:3306/ecommerce -e spring.datasource.password=1234 dgjinsu/catalog-service
 ```
